@@ -1,0 +1,41 @@
+@model IEnumerable<FarmaciaApp_V2.Models.Medicamento>
+
+<h2>Lista de Medicamentos</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Novo Medicamento</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Número de Registro ANVISA</th>
+            <th>Nome</th>
+            <th>Data de Validade</th>
+            <th>Telefone SAC</th>
+            <th>Preço (R$)</th>
+            <th>Quantidade de Comprimidos</th>
+            <th>Fabricante</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var medicamento in Model)
+        {
+            <tr>
+                <td>@medicamento.NumeroRegistroAnvisa</td>
+                <td>@medicamento.Nome</td>
+                <td>@medicamento.DataValidade.ToShortDateString()</td>
+                <td>@medicamento.TelefoneSAC</td>
+                <td>@medicamento.PrecoReais.ToString("N2")</td>
+                <td>@medicamento.QuantidadeComprimidos</td>
+                <td>@medicamento.Fabricante.Nome</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@medicamento.Id">Detalhes</a> |
+                    <a asp-action="Edit" asp-route-id="@medicamento.Id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@medicamento.Id">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

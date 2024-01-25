@@ -1,0 +1,55 @@
+@model FarmaciaApp_V2.Models.Medicamento
+
+<h2>Editar Medicamento</h2>
+
+<form asp-action="Edit" method="post">
+    <div class="form-group">
+        <label for="NumeroRegistroAnvisa">Número de Registro ANVISA</label>
+        <input type="text" class="form-control" asp-for="NumeroRegistroAnvisa" required>
+        <span asp-validation-for="NumeroRegistroAnvisa" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label for="Nome">Nome</label>
+        <input type="text" class="form-control" asp-for="Nome" required>
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label for="DataValidade">Data de Validade</label>
+        <input type="text" class="form-control" asp-for="DataValidade" data-mask="00/00/0000" required>
+        <span asp-validation-for="DataValidade" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="TelefoneSAC">Telefone SAC</label>
+        <input type="text" class="form-control" asp-for="TelefoneSAC">
+        <span asp-validation-for="TelefoneSAC" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label for="PrecoReais">Preço (Reais)</label>
+        <input type="text" class="form-control" asp-for="PrecoReais">
+        <span asp-validation-for="PrecoReais" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="QuantidadeComprimidos">Quantidade de Comprimidos</label>
+        <input type="number" class="form-control" asp-for="QuantidadeComprimidos">
+        <span asp-validation-for="QuantidadeComprimidos" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="FabricanteId">Fabricante</label>
+        <select class="form-control" asp-for="FabricanteId" required>
+            <option value="">Selecione um fabricante</option>
+            @foreach (var fabricante in ViewBag.Fabricantes)
+            {
+                <option value="@fabricante.Value">@fabricante.Text</option>
+            }
+        </select>
+        <span asp-validation-for="FabricanteId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>

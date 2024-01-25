@@ -1,0 +1,43 @@
+@model FarmaciaApp_V2.Models.Medicamento
+
+<h2>Excluir Medicamento</h2>
+
+<p>Tem certeza de que deseja excluir o medicamento a seguir?</p>
+
+<table class="table">
+    <tr>
+        <th>Número de Registro ANVISA</th>
+        <td>@Model.NumeroRegistroAnvisa</td>
+    </tr>
+    <tr>
+        <th>Nome</th>
+        <td>@Model.Nome</td>
+    </tr>
+    <tr>
+        <th>Data de Validade</th>
+        <td>@Model.DataValidade.ToShortDateString()</td>
+    </tr>
+    <tr>
+        <th>Telefone SAC</th>
+        <td>@Model.TelefoneSAC</td>
+    </tr>
+    <tr>
+        <th>Preço (R$)</th>
+        <td>@Model.PrecoReais.ToString("N2")</td>
+    </tr>
+    <tr>
+        <th>Quantidade de Comprimidos</th>
+        <td>@Model.QuantidadeComprimidos</td>
+    </tr>
+    <tr>
+        <th>Fabricante</th>
+        <td>@Model.Fabricante.Nome</td>
+    </tr>
+</table>
+
+<form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+    <div class="form-group">
+        <input type="submit" value="Excluir" class="btn btn-danger">
+        <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
