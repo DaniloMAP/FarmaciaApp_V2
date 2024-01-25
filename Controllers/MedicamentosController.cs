@@ -2,6 +2,8 @@ using FarmaciaApp_V2.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class MedicamentosController : Controller
 {
@@ -13,33 +15,58 @@ public class MedicamentosController : Controller
     }
 
     // Ação para exibir a lista de Medicamentos
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var medicamentos = _context.Medicamentos.Include(m => m.Fabricante).ToList();
+        var medicamentos = await _context.Medicamentos.Include(m => m.Fabricante).ToListAsync();
         return View(medicamentos);
     }
 
-    // Ação para adicionar um novo Medicamento
+    // Ação para exibir detalhes de um Medicamento
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var medicamento = await _context.Medicamentos
+            .Include(m => m.Fabricante)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (medicamento == null)
+        {
+            return NotFound();
+        }
+
+        return View(medicamento);
+    }
+
+    // Ação para adicionar um novo Medicamento (GET)
     public IActionResult Create()
     {
         ViewBag.Fabricantes = new SelectList(_context.Fabricantes, "Id", "Nome");
         return View();
     }
 
+    // Ação para adicionar um novo Medicamento (POST)
     [HttpPost]
-    public IActionResult Create(Medicamento medicamento)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(Medicamento medicamento)
     {
-        // Não há validações no lado do servidor neste exemplo
-        // As validações devem ser tratadas no lado do cliente (frontend)
         
+            _context.Add(medicamento);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        
+
         ViewBag.Fabricantes = new SelectList(_context.Fabricantes, "Id", "Nome", medicamento.FabricanteId);
         return View(medicamento);
     }
 
-    // Ação para editar um Medicamento existente
-    public IActionResult Edit(int id)
+    // Ação para editar um Medicamento existente (GET)
+    public async Task<IActionResult> Edit(int id)
     {
-        var medicamento = _context.Medicamentos.Find(id);
+        var medicamento = await _context.Medicamentos.FindAsync(id);
 
         if (medicamento == null)
         {
@@ -50,20 +77,60 @@ public class MedicamentosController : Controller
         return View(medicamento);
     }
 
+    // Ação para editar um Medicamento existente (POST)
     [HttpPost]
-    public IActionResult Edit(Medicamento medicamento)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, Medicamento medicamento)
     {
-        // Não há validações no lado do servidor neste exemplo
-        // As validações devem ser tratadas no lado do cliente (frontend)
-        
+        if (id != medicamento.Id)
+        {
+            return NotFound();
+        }
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                _context.Update(medicamento);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MedicamentoExists(medicamento.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
         ViewBag.Fabricantes = new SelectList(_context.Fabricantes, "Id", "Nome", medicamento.FabricanteId);
         return View(medicamento);
     }
 
-    // Ação para excluir um Medicamento existente
-    public IActionResult Delete(int id)
+    // Ação para excluir um Medicamento existente (GET)
+    public async Task<IActionResult> Delete(int id)
     {
-        var medicamento = _context.Medicamentos.Find(id);
+        var medicamento = await _context.Medicamentos.FindAsync(id);
+
+        if (medicamento == null)
+        {
+            return NotFound();
+        }
+
+        return View(medicamento);
+    }
+
+    // Ação para excluir um Medicamento existente (POST)
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var medicamento = await _context.Medicamentos.FindAsync(id);
 
         if (medicamento == null)
         {
@@ -71,9 +138,12 @@ public class MedicamentosController : Controller
         }
 
         _context.Medicamentos.Remove(medicamento);
-        _context.SaveChanges();
-        return RedirectToAction("Index");
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
     }
 
-    
+    private bool MedicamentoExists(int id)
+    {
+        return _context.Medicamentos.Any(e => e.Id == id);
+    }
 }

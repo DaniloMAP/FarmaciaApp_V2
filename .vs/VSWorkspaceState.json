@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Controllers",
+    "\\Data",
+    "\\Migrations",
+    "\\Models",
+    "\\Views",
+    "\\Views\\Medicamentos"
+  ],
+  "SelectedNode": "\\Migrations\\20240125021511_CriacaoBanco.cs",
+  "PreviewInSolutionExplorer": false
+}

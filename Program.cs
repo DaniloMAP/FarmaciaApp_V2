@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Adicione serviços ao container.
+// Adicionar serviços ao container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -30,14 +29,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Adicione a chamada para Seed para adicionar Fabricantes
+// Adicione a inicialização dos dados de seed aqui
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
-    context.Database.Migrate(); // Certifique-se de que o banco de dados esteja criado/migrado
-
-    // Chame o método Seed para adicionar os Fabricantes
-    context.Seed();
+    var services = scope.ServiceProvider;
+    SeedData.Initialize(services);
 }
 
 app.Run();
