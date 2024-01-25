@@ -19,10 +19,21 @@ public class ApplicationDBContext : DbContext
             .WithMany()
             .HasForeignKey(m => m.FabricanteId);
 
-        modelBuilder.Entity<Medicamento>()
-            .HasMany(m => m.ReacoesAdversas)
-            .WithMany(ra => ra.Medicamentos)
-            .UsingEntity(j => j.ToTable("MedicamentoReacaoAdversa"));
+        modelBuilder.Entity<MedicamentoReacaoAdversa>()
+            .HasKey(mra => new { mra.MedicamentosId, mra.ReacoesAdversasId });
+
+        modelBuilder.Entity<MedicamentoReacaoAdversa>()
+            .HasOne(mra => mra.Medicamento)
+            .WithMany(m => m.MedicamentoReacoesAdversas)
+            .HasForeignKey(mra => mra.MedicamentosId);
+
+        modelBuilder.Entity<MedicamentoReacaoAdversa>()
+            .HasOne(mra => mra.ReacaoAdversa)
+            .WithMany(ra => ra.MedicamentoReacoesAdversas)
+            .HasForeignKey(mra => mra.ReacoesAdversasId);
+
+        modelBuilder.Entity<MedicamentoReacaoAdversa>()
+            .ToTable("MedicamentoReacaoAdversa");
 
         // Outras configurações do modelo, como chaves primárias, índices, etc.
     }

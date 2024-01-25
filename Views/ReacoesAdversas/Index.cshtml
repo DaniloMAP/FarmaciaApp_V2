@@ -1,0 +1,30 @@
+@model IEnumerable<FarmaciaApp_V2.Models.ReacaoAdversa>
+
+<h2>Lista de Reações Adversas</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nova Reação Adversa</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Descrição</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var reacao in Model)
+        {
+            <tr>
+                <td>@reacao.Id</td>
+                <td>@reacao.Descricao</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@reacao.Id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@reacao.Id">Excluir</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

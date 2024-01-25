@@ -1,20 +1,26 @@
-namespace FarmaciaApp_V2.Models;
+using System;
+using System.Collections.Generic;
 
-public class Medicamento
-
+namespace FarmaciaApp_V2.Models
 {
-    public int Id { get; set; }
-    public string NumeroRegistroAnvisa { get; set; }
-    public string Nome { get; set; }
-    public DateTime DataValidade { get; set; }
-    public string TelefoneSAC { get; set; }
-    public decimal PrecoReais { get; set; }
-    public int QuantidadeComprimidos { get; set; }
+    public class Medicamento
+    {
+        public int Id { get; set; }
+        public string NumeroRegistroAnvisa { get; set; }
+        public string Nome { get; set; }
+        public DateTime DataValidade { get; set; }
+        public string TelefoneSAC { get; set; }
+        public decimal PrecoReais { get; set; }
+        public int QuantidadeComprimidos { get; set; }
 
-    // Relacionamento com Fabricante
-    public int FabricanteId { get; set; }
-    public Fabricante Fabricante { get; set; }
+        // Relacionamento com Fabricante
+        public int FabricanteId { get; set; }
+        public Fabricante Fabricante { get; set; }
 
-    // Propriedade de navegação para ReacoesAdversas
-    public ICollection<ReacaoAdversa> ReacoesAdversas { get; set; }
+        // Propriedade de navegação para ReacoesAdversas
+        public ICollection<ReacaoAdversa> ReacoesAdversas { get; set; }
+
+        // Propriedade de navegação para associar Medicamento a ReacoesAdversas
+        public ICollection<MedicamentoReacaoAdversa> MedicamentoReacoesAdversas { get; set; }
+    }
 }

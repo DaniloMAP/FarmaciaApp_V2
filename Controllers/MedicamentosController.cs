@@ -23,28 +23,32 @@ public class MedicamentosController : Controller
 
     // Ação para exibir detalhes de um Medicamento
     public async Task<IActionResult> Details(int? id)
+{
+    if (id == null)
     {
-        if (id == null)
-        {
-            return NotFound();
-        }
-
-        var medicamento = await _context.Medicamentos
-            .Include(m => m.Fabricante)
-            .FirstOrDefaultAsync(m => m.Id == id);
-
-        if (medicamento == null)
-        {
-            return NotFound();
-        }
-
-        return View(medicamento);
+        return NotFound();
     }
+
+    var medicamento = await _context.Medicamentos
+        .Include(m => m.Fabricante)
+        .Include(m => m.MedicamentoReacoesAdversas)
+            .ThenInclude(mra => mra.ReacaoAdversa)
+        .FirstOrDefaultAsync(m => m.Id == id);
+
+    if (medicamento == null)
+    {
+        return NotFound();
+    }
+
+    return View(medicamento);
+}
+
 
     // Ação para adicionar um novo Medicamento (GET)
     public IActionResult Create()
     {
         ViewBag.Fabricantes = new SelectList(_context.Fabricantes, "Id", "Nome");
+        ViewBag.TodasReacoesAdversas = _context.ReacoesAdversas.ToList();
         return View();
     }
 
@@ -53,20 +57,20 @@ public class MedicamentosController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Medicamento medicamento)
     {
-        
-            _context.Add(medicamento);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        
+        medicamento.DataValidade = medicamento.DataValidade.ToUniversalTime();
 
-        ViewBag.Fabricantes = new SelectList(_context.Fabricantes, "Id", "Nome", medicamento.FabricanteId);
-        return View(medicamento);
+        _context.Add(medicamento);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
     }
 
     // Ação para editar um Medicamento existente (GET)
     public async Task<IActionResult> Edit(int id)
     {
-        var medicamento = await _context.Medicamentos.FindAsync(id);
+        var medicamento = await _context.Medicamentos
+            .Include(m => m.MedicamentoReacoesAdversas)
+                .ThenInclude(mra => mra.ReacaoAdversa)
+            .FirstOrDefaultAsync(m => m.Id == id);
 
         if (medicamento == null)
         {
@@ -74,6 +78,7 @@ public class MedicamentosController : Controller
         }
 
         ViewBag.Fabricantes = new SelectList(_context.Fabricantes, "Id", "Nome", medicamento.FabricanteId);
+        ViewBag.TodasReacoesAdversas = _context.ReacoesAdversas.ToList();
         return View(medicamento);
     }
 
@@ -87,28 +92,41 @@ public class MedicamentosController : Controller
             return NotFound();
         }
 
-        if (ModelState.IsValid)
+        medicamento.DataValidade = medicamento.DataValidade.ToUniversalTime();
+
+        var existingMedicamento = await _context.Medicamentos
+            .Include(m => m.MedicamentoReacoesAdversas)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (existingMedicamento == null)
         {
-            try
-            {
-                _context.Update(medicamento);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MedicamentoExists(medicamento.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            return NotFound();
+        }
+
+        existingMedicamento.Nome = medicamento.Nome;
+        existingMedicamento.FabricanteId = medicamento.FabricanteId;
+        existingMedicamento.DataValidade = medicamento.DataValidade;
+
+        try
+        {
+            _context.Update(existingMedicamento);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!MedicamentoExists(medicamento.Id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
         }
 
         ViewBag.Fabricantes = new SelectList(_context.Fabricantes, "Id", "Nome", medicamento.FabricanteId);
+        ViewBag.TodasReacoesAdversas = _context.ReacoesAdversas.ToList();
         return View(medicamento);
     }
 

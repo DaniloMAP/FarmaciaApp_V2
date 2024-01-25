@@ -29,11 +29,14 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Adicione a inicialização dos dados de seed aqui
+// Adicione a chamada para Seed para adicionar Fabricantes
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    SeedData.Initialize(services);
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+    context.Database.Migrate(); // Certifique-se de que o banco de dados esteja criado/migrado
+
+    // Chame o método Seed para adicionar os Fabricantes
+    context.Seed();
 }
 
 app.Run();

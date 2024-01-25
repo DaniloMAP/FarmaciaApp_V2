@@ -1,0 +1,13 @@
+@model FarmaciaApp_V2.Models.ReacaoAdversa
+
+<h2>Editar Reação Adversa</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label for="Descricao">Descrição:</label>
+        <input type="text" class="form-control" id="Descricao" name="Descricao" value="@Model.Descricao">
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

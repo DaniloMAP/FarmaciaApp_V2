@@ -29,10 +29,7 @@
         <th>Quantidade de Comprimidos</th>
         <td>@Model.QuantidadeComprimidos</td>
     </tr>
-    <tr>
-        <th>Fabricante</th>
-        <td>@Model.Fabricante.Nome</td>
-    </tr>
+    
 </table>
 
 <form asp-action="Delete" asp-route-id="@Model.Id" method="post">

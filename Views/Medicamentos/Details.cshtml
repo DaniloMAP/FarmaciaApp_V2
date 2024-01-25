@@ -33,7 +33,14 @@
     </tr>
 </table>
 
+<h3>Reações Adversas</h3>
+<ul>
+    @foreach (var relacao in Model.MedicamentoReacoesAdversas)
+    {
+        <li>@relacao.ReacaoAdversa.Descricao</li>
+    }
+</ul>
+
 <p>
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Editar</a>
     <a asp-action="Index" class="btn btn-secondary">Voltar para a lista</a>
 </p>

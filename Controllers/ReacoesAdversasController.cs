@@ -24,16 +24,13 @@ public class ReacoesAdversasController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(ReacaoAdversa reacao)
-    {
-        if (ModelState.IsValid)
-        {
-            _context.ReacoesAdversas.Add(reacao);
-            _context.SaveChanges();
-            return RedirectToAction("Index");
-        }
-        return View(reacao);
-    }
+public IActionResult Create(ReacaoAdversa reacao)
+{
+    _context.ReacoesAdversas.Add(reacao);
+    _context.SaveChanges();
+    return RedirectToAction("Index");
+}
+
 
     // Ação para editar uma Reação Adversa existente
     public IActionResult Edit(int id)
@@ -45,12 +42,12 @@ public class ReacoesAdversasController : Controller
     [HttpPost]
     public IActionResult Edit(ReacaoAdversa reacao)
     {
-        if (ModelState.IsValid)
-        {
+       
+        
             _context.Update(reacao);
             _context.SaveChanges();
             return RedirectToAction("Index");
-        }
+        
         return View(reacao);
     }
 
