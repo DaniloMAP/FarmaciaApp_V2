@@ -35,6 +35,25 @@ public class ApplicationDBContext : DbContext
         modelBuilder.Entity<MedicamentoReacaoAdversa>()
             .ToTable("MedicamentoReacaoAdversa");
 
+            modelBuilder.Entity<Medicamento>()
+    .HasMany(m => m.ReacoesAdversas) // Medicamento tem muitas ReacoesAdversas
+    .WithMany(ra => ra.Medicamentos) // ReacaoAdversa tem muitos Medicamentos
+    .UsingEntity<MedicamentoReacaoAdversa>(
+        j => j
+            .HasOne(mra => mra.ReacaoAdversa)
+            .WithMany()
+            .HasForeignKey(mra => mra.ReacoesAdversasId),
+        j => j
+            .HasOne(mra => mra.Medicamento)
+            .WithMany()
+            .HasForeignKey(mra => mra.MedicamentosId),
+        j =>
+        {
+            j.HasKey(mra => new { mra.MedicamentosId, mra.ReacoesAdversasId });
+            j.ToTable("MedicamentoReacaoAdversa");
+        });
+
+
         // Outras configurações do modelo, como chaves primárias, índices, etc.
     }
 
